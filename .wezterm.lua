@@ -55,23 +55,26 @@ local lunchWorkSpace = function(window,pane,sessionName, path)
     },
     pane
   )
-
-  window:perform_action(
-    act.SplitHorizontal { domain = 'CurrentPaneDomain' },
-    pane
-  )
-  window:perform_action(
-    act.AdjustPaneSize { 'Right', 15 },
-    pane
-  )
-  window:perform_action(
-    act.SpawnTab 'CurrentPaneDomain',
-    pane
-  )
-  window:perform_action(
-    act.ActivatePaneByIndex(0),
-    pane
-  )
+-- Voir https://wezfurlong.org/wezterm/config/lua/keyassignment/Multiple.html
+  --
+  -- window:perform_action(
+  --   act.SplitHorizontal { domain = 'CurrentPaneDomain' },
+  --   pane
+  -- )
+  -- TODO :: J'aimerais mettre un %... 
+  -- window:perform_action(
+  --   act.AdjustPaneSize { 'Right', 15 },
+  --   pane
+  -- )
+  -- window:perform_action(
+  --   act.SpawnTab 'CurrentPaneDomain',
+  --   pane
+  -- )
+  -- -- Ne marche pas car on à ajouter un nouveau pane... 
+  -- window:perform_action(
+  --   act.ActivatePaneByIndex(0),
+  --   pane
+  -- )
 end
 
 local getWorkspaceProject = function ()
@@ -108,12 +111,37 @@ wezterm.on('lunchWorkSpace2', function(window, pane)
   lunchWorkSpaceByProject(window,pane, "project2");
 end)
 
+-- timeout_milliseconds defaults to 1000 and can be omitted
+config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
+config.keys = {
+  {
+    key = '|',
+    mods = 'LEADER|SHIFT',
+    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
+  },
+  -- Send "CTRL-A" to the terminal when pressing CTRL-A, CTRL-A
+  {
+    key = 'a',
+    mods = 'LEADER|CTRL',
+    action = wezterm.action.SendKey { key = 'a', mods = 'CTRL' },
+  },
+}
 config.keys = {
   -- Switch to the default workspace
   -- Create a new workspace with a random name and switch to it
   { key = 'i', mods = 'CTRL|SHIFT', action = act.SwitchToWorkspace },
   -- Show the launcher in fuzzy selection mode and have it list all workspaces
   -- and allow activating one.
+  {
+    key = 's',
+    mods = 'ALT',
+    action = act.SplitHorizontal {domain = "CurrentPaneDomain"}
+  },
+  {
+    key = 'S',
+    mods = 'ALT',
+    action = act.SplitVertical {domain = "CurrentPaneDomain"}
+  },
   {
     key = '9',
     mods = 'ALT',
